@@ -116,6 +116,35 @@ namespace VC
       private int splitNum;
       internal VCGen.ErrorReporter reporter;
 
+      // How can I get this here in Boogie?
+      // if (tok is Dafny.NestedToken) {
+      //   var nt = (Dafny.NestedToken)tok;
+      //   ReportBplError(nt.Inner, "Related location", false, tw);
+      // }
+
+      // Added?
+      public IEnumerable<AssertCmd> Asserts => blocks.SelectMany(block => block.cmds.OfType<AssertCmd>());
+      public string Asdf(IToken token) {
+        // if (token.GetType().Name != "NestedToken") {
+        //   // var inner = (IToken)token.GetType().GetProperty("Inner").GetValue(token, null);
+        //   return $"\n[][][] {token.filename}({token.line}, {token.col}) {token.GetType().GetProperties()[0].Name}| {token.GetType().GetProperties()[1].Name}| {token.GetType().GetProperties()[2].Name}| {token.GetType().GetProperties()[3].Name}| {token.GetType().GetProperties()[4].Name}| {token.GetType().GetProperties()[5].Name}| {token.GetType().GetProperties()[6].Name}";
+        // } else {
+          return $"{token.filename}({token.line}, {token.col})";
+        // }
+      }
+      public string Name
+      {
+        get {
+          return String.Join(
+            "\n",
+            // Why 2? Because that is how it was...
+            Asserts.Take(2).ToList().Select(assert =>
+              $"{impl.Name} - {Asdf(assert.tok)}: ErrorData({assert.ErrorData} "
+            )
+          );
+        }
+      }
+
       public Split(List<Block /*!*/> /*!*/ blocks, Dictionary<TransferCmd, ReturnCmd> /*!*/ gotoCmdOrigins,
         VCGen /*!*/ par, Implementation /*!*/ impl)
       {
